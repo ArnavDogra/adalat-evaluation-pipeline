@@ -11,9 +11,9 @@ def main():
     records = []
     
     for lang in indian_languages:
-        print(f'Downloading FLEURS {lang} dataset...')
-        ds = load_dataset('google/fleurs', lang, split='test', streaming=False)
-        ds_subset = ds.select(range(25))
+        print(f'Downloading FLEURS {lang} dataset (streaming mode)...')
+        ds = load_dataset('google/fleurs', lang, split='test', streaming=True)
+        ds_subset = ds.take(25)
         
         print(f'Saving {lang} audio files to ./audio ...')
         for i, item in enumerate(ds_subset):
