@@ -5,7 +5,7 @@ from pathlib import Path
 DEFAULT_CONFIG = {
     'directories': {
         'audio_dir': './audio',
-        'transcript_csv': './sarvam.csv',
+        'transcript_csv': './transcripts.csv',
         'output_dir': './outputs'
     },
     'models': {

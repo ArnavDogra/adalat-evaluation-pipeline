@@ -23,7 +23,7 @@ def profile_audio(path):
 def compute_buckets(master_df):
     start_t = time.time()
     
-    master_df['word_count'] = master_df['sarvam_transcript'].apply(lambda x: len(str(x).split()))
+    master_df['word_count'] = master_df['reference_transcript'].apply(lambda x: len(str(x).split()))
     master_df['speaking_rate'] = master_df['word_count'] / (master_df['duration'] + 1e-9)
     
     scaler = MinMaxScaler()

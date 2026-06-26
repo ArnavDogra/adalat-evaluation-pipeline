@@ -14,7 +14,7 @@ def main():
     ds_subset = ds.select(range(25))
     
     records = []
-    print('Saving audio files to ./audio and generating sarvam.csv...')
+    print('Saving audio files to ./audio and generating transcripts.csv...')
     for i, item in enumerate(ds_subset):
         clip_id = f'fleurs_hi_{i:03d}'
         audio_path = f'audio/{clip_id}.wav'
@@ -26,12 +26,12 @@ def main():
         
         records.append({
             'clip_id': clip_id,
-            'sarvam_transcript': item['raw_transcription']
+            'reference_transcript': item['raw_transcription']
         })
         
     df = pd.DataFrame(records)
-    df.to_csv('sarvam.csv', index=False)
-    print(f'Successfully downloaded 25 Hindi files to audio/ and generated sarvam.csv!')
+    df.to_csv('transcripts.csv', index=False)
+    print(f'Successfully downloaded 25 Hindi files to audio/ and generated transcripts.csv!')
 
 if __name__ == '__main__':
     main()

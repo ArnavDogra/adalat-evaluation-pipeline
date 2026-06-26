@@ -59,13 +59,13 @@ pip install -r requirements.txt
 
 ### 1. Input Formats
 - **Audio:** A directory containing `.wav` or `.mp3` files.
-- **Transcripts:** A `.csv` file containing two columns at minimum: `audio` (filename/clip_id) and `sarvam_transcript` (reference text).
+- **Transcripts:** A `.csv` file containing two columns at minimum: `audio` (filename/clip_id) and `reference_transcript` (reference text).
 
 ### 2. Running the Pipeline via CLI
 You can pass arguments directly via the command line:
 
 ```bash
-python run_pipeline.py --audio_dir "./audio" --transcript_csv "./sarvam.csv" --output_dir "./outputs"
+python run_pipeline.py --audio_dir "./audio" --transcript_csv "./transcripts.csv" --output_dir "./outputs"
 ```
 
 Alternatively, you can use a YAML configuration file:

@@ -63,7 +63,7 @@ def main():
     if 'clip_id' not in sarvam_df.columns and 'audio' in sarvam_df.columns:
         sarvam_df['clip_id'] = sarvam_df['audio'].astype(str).apply(lambda x: Path(x).stem)
         
-    master_df = pd.merge(audio_df, sarvam_df[['clip_id', 'sarvam_transcript']], on='clip_id', how='inner')
+    master_df = pd.merge(audio_df, sarvam_df[['clip_id', 'reference_transcript']], on='clip_id', how='inner')
     logger.info(f"Successfully matched {len(master_df)} files.")
     if master_df.empty:
         return
@@ -131,7 +131,7 @@ def main():
             res['asr_time'] = asr_time
             
             # Metrics
-            met = compute_all_metrics(str(row['sarvam_transcript']), transcript)
+            met = compute_all_metrics(str(row['reference_transcript']), transcript)
             res.update({
                 'high_lr_wer': met[0],
                 'high_lr_cer': met[1],
