@@ -15,8 +15,8 @@ DEFAULT_CONFIG = {
         'vad_repo_name': 'silero_vad'
     },
     'thresholds': {
-        'min_duration': 15.0,
-        'max_duration': 90.0,
+        'min_duration': 0.0,
+        'max_duration': 3600.0,
         'vad_sampling_rate': 16000,
         'asr_chunk_length_s': 30
     }
