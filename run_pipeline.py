@@ -55,17 +55,19 @@ def main():
     audio_df['clip_id'] = audio_df['filename'].apply(lambda x: Path(x).stem)
     
     csv_path = Path(config['directories']['transcript_csv'])
-    if not csv_path.exists():
-        logger.error(f"Transcript CSV not found at {csv_path}")
-        return
+    if csv_path.exists():
+        sarvam_df = pd.read_csv(csv_path)
+        if 'clip_id' not in sarvam_df.columns and 'audio' in sarvam_df.columns:
+            sarvam_df['clip_id'] = sarvam_df['audio'].astype(str).apply(lambda x: Path(x).stem)
+            
+        master_df = pd.merge(audio_df, sarvam_df[['clip_id', 'reference_transcript']], on='clip_id', how='inner')
+        logger.info(f"Successfully matched {len(master_df)} files with transcripts.")
+    else:
+        logger.warning(f"Transcript CSV not found at {csv_path}. Running in timing-only mode (metrics will be skipped).")
+        master_df = audio_df.copy()
         
-    sarvam_df = pd.read_csv(csv_path)
-    if 'clip_id' not in sarvam_df.columns and 'audio' in sarvam_df.columns:
-        sarvam_df['clip_id'] = sarvam_df['audio'].astype(str).apply(lambda x: Path(x).stem)
-        
-    master_df = pd.merge(audio_df, sarvam_df[['clip_id', 'reference_transcript']], on='clip_id', how='inner')
-    logger.info(f"Successfully matched {len(master_df)} files.")
     if master_df.empty:
+        logger.error("No valid audio files to process.")
         return
         
     # 2. Audio Profiling
@@ -131,25 +133,45 @@ def main():
             res['asr_time'] = asr_time
             
             # Metrics
-            met = compute_all_metrics(str(row['reference_transcript']), transcript)
-            res.update({
-                'high_lr_wer': met[0],
-                'high_lr_cer': met[1],
-                'high_lr_similarity': met[2],
-                'high_lr_keyword_recall': met[3],
-                'high_lr_matched_keywords': met[4],
-                'high_lr_missed_keywords': met[5],
-                'high_lr_critical_term_recall': met[6],
-                'high_lr_matched_critical_terms': met[7],
-                'high_lr_missed_critical_terms': met[8],
-                'high_lr_number_recall': met[9],
-                'high_lr_reference_numbers': met[10],
-                'high_lr_adalat_numbers': met[11],
-                'high_lr_missed_numbers': met[12],
-                'high_lr_incorrect_numbers': met[13],
-                'metrics_time': met[14],
-                'reason': 'Success'
-            })
+            if 'reference_transcript' in row and pd.notna(row['reference_transcript']):
+                met = compute_all_metrics(str(row['reference_transcript']), transcript)
+                res.update({
+                    'high_lr_wer': met[0],
+                    'high_lr_cer': met[1],
+                    'high_lr_similarity': met[2],
+                    'high_lr_keyword_recall': met[3],
+                    'high_lr_matched_keywords': met[4],
+                    'high_lr_missed_keywords': met[5],
+                    'high_lr_critical_term_recall': met[6],
+                    'high_lr_matched_critical_terms': met[7],
+                    'high_lr_missed_critical_terms': met[8],
+                    'high_lr_number_recall': met[9],
+                    'high_lr_reference_numbers': met[10],
+                    'high_lr_adalat_numbers': met[11],
+                    'high_lr_missed_numbers': met[12],
+                    'high_lr_incorrect_numbers': met[13],
+                    'metrics_time': met[14],
+                    'reason': 'Success'
+                })
+            else:
+                res.update({
+                    'high_lr_wer': np.nan,
+                    'high_lr_cer': np.nan,
+                    'high_lr_similarity': np.nan,
+                    'high_lr_keyword_recall': np.nan,
+                    'high_lr_matched_keywords': '',
+                    'high_lr_missed_keywords': '',
+                    'high_lr_critical_term_recall': np.nan,
+                    'high_lr_matched_critical_terms': '',
+                    'high_lr_missed_critical_terms': '',
+                    'high_lr_number_recall': np.nan,
+                    'high_lr_reference_numbers': '',
+                    'high_lr_adalat_numbers': '',
+                    'high_lr_missed_numbers': '',
+                    'high_lr_incorrect_numbers': '',
+                    'metrics_time': 0.0,
+                    'reason': 'Timing only (No Transcript)'
+                })
         else:
             # Skip ASR for unsupported languages
             res.update({

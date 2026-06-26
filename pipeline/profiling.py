@@ -23,25 +23,37 @@ def profile_audio(path):
 def compute_buckets(master_df):
     start_t = time.time()
     
-    master_df['word_count'] = master_df['reference_transcript'].apply(lambda x: len(str(x).split()))
-    master_df['speaking_rate'] = master_df['word_count'] / (master_df['duration'] + 1e-9)
-    
     scaler = MinMaxScaler()
     norm_rms = scaler.fit_transform(master_df[['rms_energy']])
     norm_var = scaler.fit_transform(master_df[['signal_variance']])
     norm_dr = scaler.fit_transform(master_df[['dynamic_range']])
     norm_silence = 1 - scaler.fit_transform(master_df[['silence_ratio']])
     norm_clipping = 1 - scaler.fit_transform(master_df[['clipping_ratio']])
-    norm_clarity = scaler.fit_transform(master_df[['speaking_rate']])
     
-    score = (
-        0.15 * norm_rms + 
-        0.10 * norm_var + 
-        0.10 * norm_dr + 
-        0.15 * norm_silence + 
-        0.20 * norm_clipping + 
-        0.30 * norm_clarity  
-    )
+    if 'reference_transcript' in master_df.columns:
+        master_df['word_count'] = master_df['reference_transcript'].apply(lambda x: len(str(x).split()))
+        master_df['speaking_rate'] = master_df['word_count'] / (master_df['duration'] + 1e-9)
+        norm_clarity = scaler.fit_transform(master_df[['speaking_rate']])
+        
+        score = (
+            0.15 * norm_rms + 
+            0.10 * norm_var + 
+            0.10 * norm_dr + 
+            0.15 * norm_silence + 
+            0.20 * norm_clipping + 
+            0.30 * norm_clarity  
+        )
+    else:
+        # Re-weight acoustic features to sum to 1.0
+        # Original sum = 0.70. Factor = 1 / 0.70 = ~1.428
+        score = (
+            (0.15 / 0.70) * norm_rms + 
+            (0.10 / 0.70) * norm_var + 
+            (0.10 / 0.70) * norm_dr + 
+            (0.15 / 0.70) * norm_silence + 
+            (0.20 / 0.70) * norm_clipping 
+        )
+        
     master_df['quality_score'] = score
     
     q33, q66 = master_df['quality_score'].quantile([0.33, 0.66])
