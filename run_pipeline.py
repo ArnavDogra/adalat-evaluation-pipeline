@@ -7,14 +7,14 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-from project.config import load_config
-from project.utils import setup_logging, validate_environment
-from project.models.mms_lid import MMSLidModel
-from project.models.adalat_asr import AdalatASRModel
-from project.models.vad import SileroVADModel
-from project.pipeline.profiling import profile_audio, compute_buckets
-from project.pipeline.metrics import compute_all_metrics
-from project.pipeline.reporting import generate_reports
+from config import load_config
+from utils import setup_logging, validate_environment
+from models.mms_lid import MMSLidModel
+from models.adalat_asr import AdalatASRModel
+from models.vad import SileroVADModel
+from pipeline.profiling import profile_audio, compute_buckets
+from pipeline.metrics import compute_all_metrics
+from pipeline.reporting import generate_reports
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Standalone Audio Evaluation Pipeline")

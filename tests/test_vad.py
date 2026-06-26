@@ -1,5 +1,5 @@
 import pytest
-from project.models.vad import SileroVADModel
+from models.vad import SileroVADModel
 
 def test_vad_instantiation(mocker):
     # Mock torch.hub.load to prevent actual download during tests

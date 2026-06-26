@@ -6,7 +6,7 @@ from rapidfuzz.distance import Levenshtein
 import pandas as pd
 import numpy as np
 import time
-from project.config import WORD_NUMBERS
+from config import WORD_NUMBERS
 
 wer_transform = jiwer.Compose([
     jiwer.ToLowerCase(), 

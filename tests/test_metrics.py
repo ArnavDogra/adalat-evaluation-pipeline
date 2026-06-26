@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from project.pipeline.metrics import normalize_for_asr_metrics, compute_number_metrics
+from pipeline.metrics import normalize_for_asr_metrics, compute_number_metrics
 
 def test_normalize_for_asr_metrics():
     assert normalize_for_asr_metrics("आज बारिश होगी।") == "आज बारिश होगी"
