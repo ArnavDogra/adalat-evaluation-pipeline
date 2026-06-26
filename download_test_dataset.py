@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import soundfile as sf
-from datasets import load_dataset
+from datasets import load_dataset, Audio
 
 def main():
     os.makedirs('audio', exist_ok=True)
@@ -13,6 +13,7 @@ def main():
     for lang in indian_languages:
         print(f'Downloading FLEURS {lang} dataset (streaming mode)...')
         ds = load_dataset('google/fleurs', lang, split='test', streaming=True)
+        ds = ds.cast_column("audio", Audio(decode=False))
         ds_subset = ds.take(25)
         
         print(f'Saving {lang} audio files to ./audio ...')
@@ -20,10 +21,9 @@ def main():
             clip_id = f'fleurs_{lang}_{i:03d}'
             audio_path = f'audio/{clip_id}.wav'
             
-            # Save audio arrays to WAV format
-            audio_data = item['audio']['array']
-            sr = item['audio']['sampling_rate']
-            sf.write(audio_path, audio_data, sr)
+            # Save raw audio bytes directly to bypass Windows torchcodec DLL errors
+            with open(audio_path, 'wb') as f:
+                f.write(item['audio']['bytes'])
             
             records.append({
                 'clip_id': clip_id,
