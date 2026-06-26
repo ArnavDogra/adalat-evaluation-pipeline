@@ -1,0 +1,16 @@
+directories:
+  audio_dir: "./audio"
+  transcript_csv: "./sarvam.csv"
+  output_dir: "./outputs"
+
+models:
+  lid_model: "facebook/mms-lid-256"
+  asr_model: "adalat-ai/whisper-medium-hi-high-lr"
+  vad_model: "snakers4/silero-vad"
+  vad_repo_name: "silero_vad"
+
+thresholds:
+  min_duration: 15.0
+  max_duration: 90.0
+  vad_sampling_rate: 16000
+  asr_chunk_length_s: 30
