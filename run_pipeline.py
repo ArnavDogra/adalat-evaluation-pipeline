@@ -94,7 +94,7 @@ def main():
     logger.info("Initializing Models (this may trigger downloads)...")
     lid_model = MMSLidModel(model_id=config['models']['lid_model'], device=device)
     asr_model = AdalatASRModel(model_id=config['models']['asr_model'], device=device, chunk_length_s=config['thresholds']['asr_chunk_length_s'])
-    vad_model = SileroVADModel(repo_or_dir=config['models']['vad_repo_name'], model_name='silero_vad')
+    vad_model = SileroVADModel(repo_or_dir=config['models']['vad_model'], model_name='silero_vad')
     
     # 5. Execution Loop
     results = []
