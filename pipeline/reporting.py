@@ -12,7 +12,7 @@ def generate_reports(df, output_dir: Path):
     df.to_csv(output_dir / 'pipeline_results.csv', index=False)
     
     # 2. Timing Breakdowns
-    time_cols = ['profiling_time', 'bucketing_time', 'lid_time', 'vad_time', 'asr_time', 'metrics_time', 'report_time']
+    time_cols = ['profiling_time', 'bucketing_time', 'lid_time', 'vad_time', 'asr_time', 'metrics_time']
     time_sums = df[time_cols].sum()
     total_sum = time_sums.sum()
     
